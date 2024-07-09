@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: mydatabase  # Nome do banco de dados
+      POSTGRES_USER: myuser    # Nome do usuário
+      POSTGRES_PASSWORD: mypassword  # Senha do usuário
+    ports:
+      - "5432:5432"  # Mapeamento da porta do container para o host
+    volumes:
+      - pgdata:/var/lib/postgresql/data  # Volume para persistência dos dados
+
+volumes:
+  pgdata:
+    driver: local
