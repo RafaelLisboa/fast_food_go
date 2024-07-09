@@ -22,7 +22,6 @@ func NewUserHandler() *UserHandler{
 }
 
 func (uh *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-	defer r.GetBody()
 
 	var userRequestBody models.User
 
@@ -39,13 +38,9 @@ func (uh *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	uh.userService.CreateUser(context.Background() ,userRequestBody);
 }
 
-func (uh *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.PathValue("id"))
-	fmt.Println("Implement delete user")
-}
 
 func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Implement Login")
+
 }
 
 func (uh *UserHandler) Logout(w http.ResponseWriter, r *http.Request) {

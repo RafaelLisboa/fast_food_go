@@ -19,7 +19,7 @@ type userService struct {
 }
 
 
-func NewUserService() *userService{
+func NewUserService() UserService {
 	repository := repositories.NewUserRepository();
 	
 	return &userService{
