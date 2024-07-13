@@ -15,7 +15,7 @@ var (
 func GetDBInstance() (*Queries, error) {
 	var err error
 	dbOnce.Do(func() {
-		dbInstance, err := sql.Open("postgres", "postgresql://user:pass@localhost/dbname?sslmode=disable")
+		dbInstance, err := sql.Open("postgres", "postgresql://myuser:mypassword@localhost/mydatabase?sslmode=disable")
 		if err != nil {
 			return
 		}

@@ -3,7 +3,7 @@ package services
 import (
 	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 const (
@@ -13,8 +13,8 @@ const (
 type tokenService struct {}
 
 type TokenService interface {
-	CreateTokenByUserId(id string) (string, error)
-	IsTokenValid(token string) (bool)
+	createTokenByUserId(id string) (string, error)
+	isTokenValid(token string) (bool)
 }
 
 
@@ -22,7 +22,7 @@ func NewTokenService() TokenService {
 	return &tokenService{}
 }
 
-func (ts *tokenService) CreateTokenByUserId(id string) (string, error) {
+func (ts *tokenService) createTokenByUserId(id string) (string, error) {
 	
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, 
         jwt.MapClaims{ 
@@ -40,7 +40,7 @@ func (ts *tokenService) CreateTokenByUserId(id string) (string, error) {
 
 }
 
-func (ts *tokenService) IsTokenValid(token string) bool {
+func (ts *tokenService) isTokenValid(token string) bool {
 	if token == "" {
 		return false;
 	}

@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 	"fast_food_auth/db"
-	"fmt"
 )
 
 type UserRepository interface {
@@ -21,7 +20,6 @@ func NewUserRepository() UserRepository {
 	conn, err := db.GetDBInstance()
 
 	if err != nil {
-		fmt.Errorf("%v", err)
 		panic("Error connecting with database")
 	}
 
