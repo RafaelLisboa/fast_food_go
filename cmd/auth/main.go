@@ -2,6 +2,7 @@ package main
 
 import (
 	"fast_food_auth/internals/routes"
+	"log"
 	"net/http"
 )
 
@@ -12,6 +13,7 @@ func main() {
 
 func startServer() {
 	routes := routes.CreateRoutes();
-
+	log.Println("Service Running on port 8080")
 	http.ListenAndServe(":8080", routes);
+
 }

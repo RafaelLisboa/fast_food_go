@@ -17,10 +17,10 @@ func GetDBInstance() (*Queries, error) {
 	dbOnce.Do(func() {
 		dbInstance, err := sql.Open("postgres", "postgresql://myuser:mypassword@localhost/mydatabase?sslmode=disable")
 		if err != nil {
-			return
+			panic(err)
 		}
 		if err = dbInstance.Ping(); err != nil {
-			dbInstance = nil
+			panic(err)
 		}
 		queries = New(dbInstance)
 	})

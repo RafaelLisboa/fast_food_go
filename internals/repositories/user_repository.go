@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"fast_food_auth/db"
+	"log"
 )
 
 type UserRepository interface {
@@ -31,7 +32,7 @@ func NewUserRepository() UserRepository {
 
 func (ur *userRepository) CreateUser(ctx context.Context, params db.CreateUserParams)  error {
 	err := ur.db.CreateUser(ctx, params);
-
+	log.Fatal(err)
 	return err;
 }
 
