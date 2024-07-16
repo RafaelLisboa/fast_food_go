@@ -16,7 +16,7 @@ func encryptPassword(password string) string {
 		log.Fatal("Error trying create secret ", err)
 	}
 
-	b := base64.StdEncoding.EncodeToString([]byte(user.Password))
+	b := base64.StdEncoding.EncodeToString([]byte(password))
 
 	passwordTextByteBuffer := make([]byte, aes.BlockSize+len(b))
 

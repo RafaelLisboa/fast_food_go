@@ -2,16 +2,10 @@ package services
 
 import (
 	"context"
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/rand"
-	"encoding/base64"
 	"fast_food_auth/db"
+	"fast_food_auth/internals/exceptions"
 	"fast_food_auth/internals/models"
 	"fast_food_auth/internals/repositories"
-	"io"
-	"log"
-
 	"github.com/google/uuid"
 )
 
@@ -32,6 +26,18 @@ func NewUserService() UserService {
 }
 
 func (us *userService) CreateUser(ctx context.Context, user models.User) error {
+
+	createdUser, err := us.userRepository.GetUserByEmail(ctx, user.Email)
+
+	if err != nil {
+		exceptions.NewError(ctx, exceptions.INTERNAL_ERROR)
+		return err
+	}
+
+	if createdUser.ID.String() != "" {
+		exceptions.NewError(ctx, exceptions.USER_ALREADY_EXISTS)
+		return err
+	}
 
 	id := uuid.NewString()
 

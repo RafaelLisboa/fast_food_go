@@ -38,12 +38,13 @@ func (uh *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "User doesn't have all required arguments username | password", http.StatusBadRequest)
 	}
 
-	err = uh.userService.CreateUser(context.Background() ,userRequestBody);
+	ctx := context.WithValue(context.Background(), 0, w);
+
+	err = uh.userService.CreateUser(ctx ,userRequestBody);
 
 	
 	if err != nil {
-		errorMessage := fmt.Sprintf("Could not save the user in database %s", err) 
-		http.Error(w, errorMessage, http.StatusInternalServerError)
+		return
 	}
 }
 
