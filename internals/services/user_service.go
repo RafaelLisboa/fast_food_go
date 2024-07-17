@@ -29,12 +29,7 @@ func (us *userService) CreateUser(ctx context.Context, user models.User) error {
 
 	createdUser, err := us.userRepository.GetUserByEmail(ctx, user.Email)
 
-	if err != nil {
-		exceptions.NewError(ctx, exceptions.INTERNAL_ERROR)
-		return err
-	}
-
-	if createdUser.ID.String() != "" {
+	if createdUser.Email != "" && createdUser.Username != "" {
 		exceptions.NewError(ctx, exceptions.USER_ALREADY_EXISTS)
 		return err
 	}
