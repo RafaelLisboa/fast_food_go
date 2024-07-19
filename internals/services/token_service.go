@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	secretKey = "ohfe84230_*&*(¨#812)"
+	secretKey = "4b8e8d2b24f83e945aee647ed75a1e2167c6e7a2b9b3f913f5b9b3f9135c6e8d"
 )
 
 type tokenService struct {}
@@ -30,7 +30,7 @@ func (ts *tokenService) createTokenByUserId(id string) (string, error) {
         "exp": time.Now().Add(time.Minute * 10).Unix(), 
     })
 
-	tokenString, err := token.SignedString(secretKey)
+	tokenString, err := token.SignedString([]byte(secretKey))
     
 	if err != nil {
  	   return "", err

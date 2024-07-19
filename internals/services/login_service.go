@@ -2,39 +2,50 @@ package services
 
 import (
 	"context"
-	"errors"
+
+	"fast_food_auth/internals/exceptions"
 	"fast_food_auth/internals/models"
 	"fast_food_auth/internals/repositories"
 )
 
 type loginService struct {
-	tokenService TokenService
+	tokenService   TokenService
 	userRepository repositories.UserRepository
 }
 
 type LoginService interface {
-	Login(user models.User) (string, error)
+	Login(ctx context.Context, user models.LoginRequest) (string, error)
 }
 
 func NewLoginService() LoginService {
-	tokenService := NewTokenService();
+	tokenService := NewTokenService()
+	userRepository := repositories.NewUserRepository()
 
-	return &loginService{tokenService: tokenService}
+	return &loginService{tokenService: tokenService,
+		userRepository: userRepository}
+
 }
 
+func (ls *loginService) Login(ctx context.Context, user models.LoginRequest) (string, error) {
 
-func (ls *loginService) Login(user models.User) (string, error) {
-	if user.Email == "" {
-		return "", errors.New("email is required when login");
+	if valid, field := GetEmptyField(user); !valid {
+		return "", exceptions.NewErrorWithMessage(ctx, exceptions.EMPTY_REQUIRED_FIELD, field)
 	}
 
-	userRecord, err := ls.userRepository.GetUserByEmail(context.Background(), user.Email);
+	userRecord, err := ls.userRepository.GetUserByEmail(ctx, user.Email)
+
+	encryptedPassword := encryptPassword(user.Password);
+
+
+	if encryptedPassword != userRecord.Password {
+		return "", exceptions.NewError(ctx, exceptions.LOGIN_FAILED)
+	}
 
 	if err != nil {
-		return "", err;
+		return "", err
 	}
 
-	token , err := ls.tokenService.createTokenByUserId(userRecord.ID.String())
+	token, err := ls.tokenService.createTokenByUserId(userRecord.ID.String())
 
 	if err != nil {
 		return "", err

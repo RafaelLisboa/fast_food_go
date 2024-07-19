@@ -6,6 +6,8 @@ import (
 	"fast_food_auth/internals/exceptions"
 	"fast_food_auth/internals/models"
 	"fast_food_auth/internals/repositories"
+
+
 	"github.com/google/uuid"
 )
 
@@ -27,11 +29,14 @@ func NewUserService() UserService {
 
 func (us *userService) CreateUser(ctx context.Context, user models.User) error {
 
-	createdUser, err := us.userRepository.GetUserByEmail(ctx, user.Email)
+	if valid, field := GetEmptyField(user); !valid {
+		return exceptions.NewErrorWithMessage(ctx, exceptions.EMPTY_REQUIRED_FIELD, field)
+	}
+
+	createdUser, _ := us.userRepository.GetUserByEmail(ctx, user.Email)
 
 	if createdUser.Email != "" && createdUser.Username != "" {
-		exceptions.NewError(ctx, exceptions.USER_ALREADY_EXISTS)
-		return err
+		return exceptions.NewError(ctx, exceptions.USER_ALREADY_EXISTS)
 	}
 
 	id := uuid.NewString()
@@ -48,3 +53,4 @@ func (us *userService) CreateUser(ctx context.Context, user models.User) error {
 
 	return us.userRepository.CreateUser(ctx, *userDb)
 }
+
