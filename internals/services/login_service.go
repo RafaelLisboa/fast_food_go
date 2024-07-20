@@ -14,7 +14,7 @@ type loginService struct {
 }
 
 type LoginService interface {
-	Login(ctx context.Context, user models.LoginRequest) (string, error)
+	Login(ctx context.Context, user models.LoginRequest) (*models.Token, error)
 }
 
 func NewLoginService() LoginService {
@@ -26,10 +26,10 @@ func NewLoginService() LoginService {
 
 }
 
-func (ls *loginService) Login(ctx context.Context, user models.LoginRequest) (string, error) {
+func (ls *loginService) Login(ctx context.Context, user models.LoginRequest) (*models.Token, error) {
 
 	if valid, field := GetEmptyField(user); !valid {
-		return "", exceptions.NewErrorWithMessage(ctx, exceptions.EMPTY_REQUIRED_FIELD, field)
+		return nil, exceptions.NewErrorWithMessage(ctx, exceptions.EMPTY_REQUIRED_FIELD, field)
 	}
 
 	userRecord, err := ls.userRepository.GetUserByEmail(ctx, user.Email)
@@ -38,20 +38,20 @@ func (ls *loginService) Login(ctx context.Context, user models.LoginRequest) (st
 
 
 	if encryptedPassword != userRecord.Password {
-		return "", exceptions.NewError(ctx, exceptions.LOGIN_FAILED)
+		return nil, exceptions.NewError(ctx, exceptions.LOGIN_FAILED)
 	}
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	token, err := ls.tokenService.createTokenByUserId(userRecord.ID.String())
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	tokenStr := string(token)
 
-	return tokenStr, nil
+
+	return token, nil
 }

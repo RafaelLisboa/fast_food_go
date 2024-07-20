@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fast_food_auth/internals/models"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -13,7 +14,7 @@ const (
 type tokenService struct {}
 
 type TokenService interface {
-	createTokenByUserId(id string) (string, error)
+	createTokenByUserId(id string) (*models.Token, error)
 	isTokenValid(token string) (bool)
 }
 
@@ -22,21 +23,28 @@ func NewTokenService() TokenService {
 	return &tokenService{}
 }
 
-func (ts *tokenService) createTokenByUserId(id string) (string, error) {
+func (ts *tokenService) createTokenByUserId(id string) (*models.Token, error) {
 	
+
+	expTime := time.Now().Add(time.Minute * 10).Unix();
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, 
         jwt.MapClaims{ 
         "id": id, 
-        "exp": time.Now().Add(time.Minute * 10).Unix(), 
+        "exp": expTime, 
     })
 
 	tokenString, err := token.SignedString([]byte(secretKey))
     
 	if err != nil {
- 	   return "", err
+ 	   return nil, err
     }
 
-	return tokenString, nil;
+
+	return &models.Token{
+		AcessToken: tokenString,
+		ExpiresIn: uint32(expTime),
+	}, nil
 
 }
 

@@ -61,6 +61,8 @@ func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		http.Error(w, "could not login you", http.StatusInternalServerError)
 	}
+	tokenBytes, _ := json.Marshal(token)
 
-	w.Write([]byte(token))
+	w.Write(tokenBytes)
+
 }
