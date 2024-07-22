@@ -5,3 +5,11 @@ CREATE TABLE users (
     password TEXT NOT NULL,
     username TEXT NOT NULL UNIQUE
 );
+
+
+CREATE TABLE refresh_tokens (
+    token_id INTEGER PRIMARY KEY NOT NULL,
+    user_id TEXT NOT NULL,
+    token TEXT NOT NULL,
+    expires_at INTEGER NOT NULL
+);

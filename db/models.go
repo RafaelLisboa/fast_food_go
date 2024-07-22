@@ -4,7 +4,16 @@
 
 package db
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
+
+type RefreshToken struct {
+	TokenID   int32
+	UserID    string
+	Token     string
+	ExpiresAt int32
+}
 
 type User struct {
 	ID       uuid.UUID

@@ -11,8 +11,7 @@ import (
 )
 
 const createUser = `-- name: CreateUser :exec
-INSERT INTO users (id, name, email, password, username) 
-VALUES ($1, $2, $3, $4, $5)
+INSERT INTO users (id, name, email, password, username) VALUES ($1, $2, $3, $4, $5)
 `
 
 type CreateUserParams struct {
@@ -52,11 +51,11 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, name, email, password, username FROM users WHERE id = $1
+SELECT id, name, email, password, username FROM users WHERE username = $1
 `
 
-func (q *Queries) GetUserByID(ctx context.Context, id string) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUserByID, id)
+func (q *Queries) GetUserByID(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByID, username)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -84,5 +83,3 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 	)
 	return i, err
 }
-
-
