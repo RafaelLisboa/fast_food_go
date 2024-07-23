@@ -16,12 +16,11 @@ const (
 
 type tokenService struct {
 	tokenRepository repositories.TokenRepository
-	userService     UserService
 }
 
 type TokenService interface {
-	createTokenByUserId(id string) (*models.Token, error)
-	isTokenValid(token string) bool
+	createTokenByUserId(ctx context.Context, id string) (*models.Token, error)
+	isTokenValid(ctx context.Context, token string)( bool,  string)
 }
 
 func NewTokenService() TokenService {
@@ -32,8 +31,7 @@ func NewTokenService() TokenService {
 	}
 }
 
-func (ts *tokenService) createTokenByUserId(id string) (*models.Token, error) {
-
+func (ts *tokenService) createTokenByUserId(ctx context.Context, id string) (*models.Token, error) {
 	expTime := time.Now().Add(time.Minute * 10).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
@@ -43,39 +41,51 @@ func (ts *tokenService) createTokenByUserId(id string) (*models.Token, error) {
 		})
 
 	tokenString, err := token.SignedString([]byte(secretKey))
-	
 	if err != nil {
-		//TODO: implement
+		return nil, err
 	}
 
-	refreshTokenString, err := ts.createRefreshToken(id)
-
+	var refreshTokenString string
+	refreshTokenString, err = ts.createRefreshToken(id)
+	
 	if err != nil {
 		return nil, err
 	}
 
 	return &models.Token{
-		AcessToken: tokenString,
-		ExpiresIn:  uint32(expTime),
+
+		AcessToken:   tokenString,
+		ExpiresIn:    uint32(expTime),
 		RefreshToken: refreshTokenString,
 	}, nil
-
 }
 
-func (ts *tokenService) isTokenValid(token string) bool {
+func (ts *tokenService) isTokenValid(ctx context.Context, token string) (bool, string) {
 	if token == "" {
-		return false
+		return false, ""
 	}
 
 	tokenParsed, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		return secretKey, nil
+		return []byte(refreshTokenSecret), nil
 	})
 
-	if err != nil {
-		return false
+	claims := jwt.MapClaims{}
+
+	_, err = jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(refreshTokenSecret), nil
+	})
+
+	userId := claims["id"]
+
+	if err != nil || userId == "" {
+		return false, ""
 	}
 
-	return tokenParsed.Valid
+	if !ts.tokenRepository.IsRefreshTokenValid(ctx, token) {
+		return false, ""
+	}
+
+	return tokenParsed.Valid, userId.(string)
 }
 
 func (ts *tokenService) createRefreshToken(userId string) (string, error) {
@@ -88,23 +98,20 @@ func (ts *tokenService) createRefreshToken(userId string) (string, error) {
 		})
 
 	refreshTokenStringJwt, err := refreshToken.SignedString([]byte(refreshTokenSecret))
-
 	if err != nil {
 		panic(err)
 	}
 
 	refreshTokenParam := &models.RefreshToken{
-		UserId: userId,
+		UserId:    userId,
 		ExpiresIn: uint32(refreshTokenExpTime),
-		Token: refreshTokenStringJwt,
+		Token:     refreshTokenStringJwt,
 	}
 
-	err = ts.tokenRepository.CreateRefreshTokenByUserId(context.Background(), refreshTokenParam);
-
+	err = ts.tokenRepository.CreateRefreshTokenByUserId(context.Background(), refreshTokenParam)
 	if err != nil {
 		return "", err
 	}
 
 	return refreshTokenStringJwt, nil
-
 }

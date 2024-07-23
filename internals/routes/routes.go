@@ -14,6 +14,7 @@ func CreateRoutes() *http.ServeMux {
 
 	serverMux.HandleFunc("POST /users", userHandler.CreateUser)
 	serverMux.HandleFunc("POST /login", userHandler.Login)
+	serverMux.HandleFunc("POST /refresh-token", userHandler.RefreshToken)
 
 	return serverMux;
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fast_food_auth/internals/models"
 	"fast_food_auth/internals/services"
+	"log"
 	"net/http"
 )
 
@@ -59,7 +60,46 @@ func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tokenBytes, _ := json.Marshal(token)
+	tokenBytes, err := json.Marshal(token)
+
+	if err != nil {
+		return
+	}
 
 	w.Write(tokenBytes)
+}
+
+
+func (uh *UserHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
+	ctx := context.WithValue(context.Background(), 0, w)
+
+
+	var refreshTokenRequest models.Token
+
+	err := json.NewDecoder(r.Body).Decode(&refreshTokenRequest)
+
+	if err != nil {
+		log.Println(err)
+		return 
+	}
+
+	if refreshTokenRequest.RefreshToken == ""  {
+		return 
+	}
+
+	newToken, err := uh.loginService.RefreshToken(ctx, refreshTokenRequest.RefreshToken)
+	
+	if err != nil {
+		return 
+	}
+
+
+	newTokenString, err := json.Marshal(newToken)
+
+	if err != nil {
+		return 
+	}
+	w.Write([]byte(newTokenString))
+
+
 }

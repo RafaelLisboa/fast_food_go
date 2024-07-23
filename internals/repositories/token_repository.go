@@ -30,6 +30,7 @@ func NewTokenRepository() *tokenRepository {
 
 func (tr *tokenRepository) CreateRefreshTokenByUserId(ctx context.Context, refreshToken *models.RefreshToken)  error {
 	params := &db.CreateRefreshTokenParams{
+		
 		UserID: refreshToken.UserId,
 		Token: refreshToken.Token,
 		ExpiresAt: int32(refreshToken.ExpiresIn),
