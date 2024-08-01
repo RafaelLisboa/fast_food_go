@@ -3,10 +3,11 @@ package services
 import (
 	"context"
 	"fast_food_auth/db"
-	"fast_food_auth/internals/exceptions"
-	"fast_food_auth/internals/models"
-	"fast_food_auth/internals/repositories"
-
+	"fast_food_auth/internals/server/models"
+	"fast_food_auth/internals/server/repositories"
+	"fast_food_auth/pkg/exceptions"
+	"fast_food_auth/pkg/validation"
+	"fast_food_auth/pkg/encrypt"
 
 	"github.com/google/uuid"
 )
@@ -29,7 +30,7 @@ func NewUserService() UserService {
 
 func (us *userService) CreateUser(ctx context.Context, user models.User) error {
 
-	if valid, field := GetEmptyField(user); !valid {
+	if valid, field := validation.GetEmptyField(user); !valid {
 		return exceptions.NewErrorWithMessage(ctx, exceptions.EMPTY_REQUIRED_FIELD, field)
 	}
 
@@ -41,7 +42,7 @@ func (us *userService) CreateUser(ctx context.Context, user models.User) error {
 
 	id := uuid.NewString()
 
-	passwordText := encryptPassword(user.Password)
+	passwordText := encrypt.EncryptPassword(user.Password)
 
 	userDb := &db.CreateUserParams{
 		ID:       id,

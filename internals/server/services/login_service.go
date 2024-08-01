@@ -2,9 +2,11 @@ package services
 
 import (
 	"context"
-	"fast_food_auth/internals/exceptions"
-	"fast_food_auth/internals/models"
-	"fast_food_auth/internals/repositories"
+	"fast_food_auth/internals/server/models"
+	"fast_food_auth/internals/server/repositories"
+	"fast_food_auth/pkg/encrypt"
+	"fast_food_auth/pkg/exceptions"
+	"fast_food_auth/pkg/validation"
 	"fmt"
 )
 
@@ -29,13 +31,13 @@ func NewLoginService() LoginService {
 }
 
 func (ls *loginService) Login(ctx context.Context, user models.LoginRequest) (*models.Token, error) {
-	if valid, field := GetEmptyField(user); !valid {
+	if valid, field := validation.GetEmptyField(user); !valid {
 		return nil, exceptions.NewErrorWithMessage(ctx, exceptions.EMPTY_REQUIRED_FIELD, field)
 	}
 
 	userRecord, err := ls.userRepository.GetUserByEmail(ctx, user.Email)
 
-	encryptedPassword := encryptPassword(user.Password)
+	encryptedPassword := encrypt.EncryptPassword(user.Password)
 
 	if encryptedPassword != userRecord.Password {
 		return nil, exceptions.NewError(ctx, exceptions.LOGIN_FAILED)

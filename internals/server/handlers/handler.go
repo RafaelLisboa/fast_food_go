@@ -3,8 +3,8 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"fast_food_auth/internals/models"
-	"fast_food_auth/internals/services"
+	"fast_food_auth/internals/server/models"
+	"fast_food_auth/internals/server/services"
 	"log"
 	"net/http"
 )

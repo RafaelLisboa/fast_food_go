@@ -1,11 +1,11 @@
-package services
+package encrypt
 
 import (
 	"crypto/sha256"
 	"encoding/hex"
 )
 
-func encryptPassword(password string) string {
+func EncryptPassword(password string) string {
 	return hashPassword(password)
 }
 
