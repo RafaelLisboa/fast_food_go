@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fast_food_auth/internals/routes"
+	"fast_food_auth/internals/server/routes"
 	"log"
 	"net/http"
 )

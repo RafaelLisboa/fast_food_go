@@ -2,6 +2,8 @@ package db
 
 import (
 	"database/sql"
+	"fast_food_auth/config"
+	"fmt"
 	"sync"
 
 	_ "github.com/lib/pq" // Postgres driver
@@ -13,9 +15,14 @@ var (
 )
 
 func GetDBInstance() (*Queries, error) {
+	
+	
 	var err error
 	dbOnce.Do(func() {
-		dbInstance, err := sql.Open("postgres", "postgresql://myuser:mypassword@localhost/mydatabase?sslmode=disable")
+		credentials := config.GetDatabaseCredentials();
+		
+
+		dbInstance, err := sql.Open("postgres", fmt.Sprintf("postgresql://%s:%s@%s/%s?sslmode=disable", credentials.Username, credentials.Password, credentials.Host, credentials.Database))
 		if err != nil {
 			panic(err)
 		}

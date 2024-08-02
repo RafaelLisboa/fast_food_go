@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"fast_food_auth/internals/handlers"
+	"fast_food_auth/internals/server/handlers"
 	"net/http"
 )
 

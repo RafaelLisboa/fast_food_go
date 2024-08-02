@@ -2,8 +2,9 @@ package services
 
 import (
 	"context"
-	"fast_food_auth/internals/models"
-	"fast_food_auth/internals/repositories"
+	"fast_food_auth/internals/server/models"
+	"fast_food_auth/internals/server/repositories"
+	"fast_food_auth/pkg/exceptions"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -68,6 +69,11 @@ func (ts *tokenService) isTokenValid(ctx context.Context, token string) (bool, s
 	tokenParsed, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		return []byte(refreshTokenSecret), nil
 	})
+
+	if err != nil {
+		exceptions.NewError(ctx, exceptions.TOKEN_ERROR)
+		return false, ""
+	}
 
 	claims := jwt.MapClaims{}
 
