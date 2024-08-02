@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"context"
-	"fast_food_auth/db"
+	"fast_food_auth/internals/db"
 	"fast_food_auth/internals/server/models"
 )
 

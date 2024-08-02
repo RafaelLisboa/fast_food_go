@@ -10,8 +10,14 @@ services:
       - "8080:8080"
     environment:
       - GO_ENV=production
+      - USERNAME=myuser
+      - PASSWORD=mypassword
+      - HOST=postgres
+      - DATABASE=mydatabase
     depends_on:
       - postgres
+    networks:
+      - app_network
 
   postgres:
     image: postgres:latest
@@ -25,7 +31,13 @@ services:
       - "5432:5432"  
     volumes:
       - pgdata:/var/lib/postgresql/data  
+    networks:
+      - app_network
 
 volumes:
   pgdata:
     driver: local
+
+networks:
+  app_network:
+    driver: bridge

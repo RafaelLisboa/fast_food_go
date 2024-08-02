@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"context"
-	"fast_food_auth/db"
+	"fast_food_auth/internals/db"
 )
 
 type UserRepository interface {

@@ -2,7 +2,7 @@ package services
 
 import (
 	"context"
-	"fast_food_auth/db"
+	"fast_food_auth/internals/db"
 	"fast_food_auth/internals/server/models"
 	"fast_food_auth/internals/server/repositories"
 	"fast_food_auth/pkg/exceptions"
