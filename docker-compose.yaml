@@ -14,6 +14,7 @@ services:
       - PASSWORD=mypassword
       - HOST=postgres
       - DATABASE=mydatabase
+    restart: always
     depends_on:
       - postgres
     networks:
@@ -30,13 +31,14 @@ services:
     ports:
       - "5432:5432"  
     volumes:
-      - pgdata:/var/lib/postgresql/data  
+      - ./pgdata:/var/lib/postgresql/data  
+      - ./internals/db/schema/schema.sql:/docker-entrypoint-initdb.d/db.sql
     networks:
       - app_network
 
 volumes:
   pgdata:
-    driver: local
+    external: true
 
 networks:
   app_network:

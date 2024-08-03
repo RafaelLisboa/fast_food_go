@@ -8,7 +8,7 @@ CREATE TABLE users (
 
 
 CREATE TABLE refresh_tokens (
-    token_id INTEGER PRIMARY KEY NOT NULL,
+    token_id SERIAL PRIMARY KEY,
     user_id TEXT NOT NULL,
     token TEXT NOT NULL,
     expires_at INTEGER NOT NULL
